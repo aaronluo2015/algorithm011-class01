@@ -64,11 +64,11 @@ Queue是在Collection基础上扩展的接口，扩展了以下几个队列的�
 <li>输入：需要放入队列的元素</li>
 <li>输出：成功返回true，失败返回false</li>
 <li>
-抛出异常：
+抛出异常：</br>
 <code>
-IllegalStateException 因为队列容量限制，不能放入队列
-ClassCastException 因为放入的元素类型和Queue声明的泛型类型不一致
-NullPointerException 放入队列的元素是null
+  IllegalStateException 因为队列容量限制，不能放入队列</br>
+ClassCastException 因为放入的元素类型和Queue声明的泛型类型不一致</br>
+NullPointerException 放入队列的元素是null</br>
 IllegalArgumentException 因为元素的某些属性导致不能被放入队列
 </code>
 </li>
