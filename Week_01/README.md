@@ -66,13 +66,9 @@ Queue是在Collection基础上扩展的接口，扩展了以下几个队列的�
 <li>
 抛出异常：</br>
 <code>
-
 IllegalStateException 因为队列容量限制，不能放入队列
-
 ClassCastException 因为放入的元素类型和Queue声明的泛型类型不一致
-
 NullPointerException 放入队列的元素是null
-
 IllegalArgumentException 因为元素的某些属性导致不能被放入队列
 </code>
 </li>
@@ -82,14 +78,12 @@ IllegalArgumentException 因为元素的某些属性导致不能被放入队列
 <li>功能：把泛型元素e放入到队里中，不受队列容量限制，底层自动扩容队列容量</li>
 <li>输入：需要放入队列的元素</li>
 <li>输出：成功返回true，失败返回false</li>
-<li>抛出异常：<br/><code>
-  
+<li>抛出异常：<br/>
+<code>
 ClassCastException 因为放入的元素类型和Queue声明的泛型类型不一致
-
 NullPointerException 放入队列的元素是null
-
-  IllegalArgumentException 因为元素的某些属性导致不能被放入队列
-  </code>
+IllegalArgumentException 因为元素的某些属性导致不能被放入队列
+</code>
 </li>
 </ul>
 <h4>3）E remove()</h4>
@@ -98,10 +92,10 @@ NullPointerException 放入队列的元素是null
 <li>输入：无</li>
 <li>输出：删除队列头第一个元素并返回元素</li>
 <li>抛出异常：<br/>
-  <code>
-    
+<code>
 NoSuchElementException 队列为空时抛出异常
-    </code></li>
+</code>
+</li>
 </ul>
 <h4>4）E poll()</h4>
 <ul>
