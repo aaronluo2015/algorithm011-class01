@@ -55,7 +55,7 @@
 </code>
 </pre>
 <h2>2.分析 Queue 和 Priority Queue 的源码</h2>
-语言：java
+<p>语言：java</p>
 <h3>Queue</h3>
 Queue是在Collection基础上扩展的接口，扩展了以下几个队列的方法：
 <h4>1）boolean add(E e)</h4>
@@ -123,3 +123,25 @@ NoSuchElementException 队列为空时抛出异常
 <li>抛出异常：无</li>
 </ul>
 
+<h3>Priority Queue</h3>
+<p>Priority Queue是一个优先级队列，队列中的元素按照提供的comparator或者元素实现的Comparator接口做比较，按优先级排序放入队列中，继承自AbstractQueue，而AbstractQueue实现了Queue接口的方法</p>
+<h4>1）boolean add(E e)</h4>
+<p>直接调用offer方法。</p>
+<h4>2）boolean offer(E e)</h4>
+<ul>
+<li>第一步：检查队列当前数组容量，如果当前容量不足，则根据当前容量值进行扩展，
+如果当前容量oldCapacity小于64，则扩展一倍+2，否则扩展当前容量的50%。
+如果超过Integer.MAX_VALUE，则抛出OutOfMemoryError异常
+</li>
+<li>第二步：存放队列数据如果队列为空，直接插入第一个未知。否则进行比较，如果队列有设置comparator则使用设置的comparator对元素进行比较
+否则使用元素实现的Comparable接口方法进行比较，插入对应的数据优先级位置</li>
+</ul>
+<h4>3）E remove()</h4>
+<p>调用poll方法，如果没有元素则抛出NoSuchElementException异常</p>
+<h4>4）E poll()</h4>
+<li>获取第一个元素</li>
+</li>将最后一个元素数组置空，并放到正确位置</li>
+<h4>5）E element()</h4>
+<p>调用peek方法，如果没有元素则抛出NoSuchElementException异常</p>
+<h4>6）E peek()</h4>
+<p>获取第一个元素</p>
