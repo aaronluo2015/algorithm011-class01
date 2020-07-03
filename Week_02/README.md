@@ -9,6 +9,7 @@ HashMap是一种Map，HashMap仅是一种Map的实现版本。HashMap将根据ke
 </p>
 <p>
 HashMap是通过计算key的hashCode来找到记录的存储位置的，那因为hash函数不会台完美的原因，势必要造成多个记录的key的hashCode一样的情况，上图展示了这种情况，完美情况下，我们希望每一个数组位置上仅有一个记录，但是很多情况下一个数组位置上会落入多个记录，也就是哈希冲突，解决哈希冲突的方法主要有开发地址和链地址，HashMap采用了后者，将hashCode相同的记录放在同一个数组位置上，多个hashCode相同的记录被存储在一条链表上，我们知道，链表上的查询复杂的为O(N)，当这个N很大的时候也就成了瓶颈，所以HashMap在链表的长度大于8的时候就会将链表转换为红黑树这种数据结构，红黑树的查询效率高达O(lgN)，也就是说，复杂度降了一个数量级，完全可以适用于实际生产环境。下面是链表节点数据结构的代码：
+
 <code>
     static class Node<K,V> implements Map.Entry<K,V> {
         final int hash; //哈希值，HashMap用这个值来确定记录的位置
@@ -53,12 +54,14 @@ HashMap是通过计算key的hashCode来找到记录的存储位置的，那因�
 </p>
 <p>
 下面是上面图中展示的数组：
+    
 <code>
 transient Node<K,V>[] table;
 </code>
 </p>
 <p>
 这个table就是存储数据的数组，上面图中的每个黑色的球是一个Node。下面展示了几个重要的成员变量：
+    
 <code>
     /**
      * The number of key-value mappings contained in this map.
@@ -103,6 +106,7 @@ transient Node<K,V>[] table;
 </p>
 <p>
 需要注意的一点是，HashMap的哈希桶table的大小必须为2的n次方，初始大小为16，下文中将会说明为什么一定要是2的n次方。size字段的意思是当前记录数量，loadFactor是负载因子，默认为0.75，而threshold是作为扩容的阈值而存在的，它是由负载银子决定的。下面的方法是返回与给定数值最接近的2的n次方的值：
+    
 <code>
     /**
      * Returns a power of two size for the given target capacity.
@@ -121,6 +125,7 @@ transient Node<K,V>[] table;
 <h2>HashMap如何确定记录的table位置</h2>
 <p>
 在理解了HashMap的基本存储结构之后，首先来分析一下HashMap是如何确定记录的table位置的。这是至关重要的一步，也是众多HashMap操作的第一步，因为要想找到记录，首先要确定记录在table中的index，然后才能去table的index上的链表或者红黑树里面去寻找记录。下面的方法hash展示了HashMap是如何计算记录的hashCode值的方法：
+    
 <code>
     static final int hash(Object key) {
         int h;
@@ -130,6 +135,7 @@ transient Node<K,V>[] table;
 </p>
 <p>
 上面的hash方法仅仅是第一步，它只是计算出了hashCode值，但是还可以确定table中的index，接下来的一步需要做的就是根据hashCode来定位index，也就是需要对hashCode取模（hashCode % length），length是table的长度，但是我们知道，取模运算是较为复杂的计算，是非常耗时的计算，那有没有方法不通过取模计算而达到取模的效果呢，答案是肯定的，上文中提到，table的长度必然是2的n次方，这点很重要，HashMap通过设定table的长度为2的n次方，在取模的时候就可以通过下面的算法来进行：
+    
 <code>
 int index = hashCode & (length -1)
 </code>
@@ -140,6 +146,7 @@ int index = hashCode & (length -1)
 <h2>HashMap插入元素的过程详解</h2>
 <p>
 上面分析了HashMap计算记录在table中的index的方法，下面来分析一下HashMap是如何将一个新的记录插入到HashMap中去的。也就是HashMap中非常重要的方法put，下面展示了它的实现细节：
+    
 <code>
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
@@ -202,6 +209,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 <h2>HashMap扩容resize方法详解</h2>
 <p>
 上文分析了HashMap的put方法的细节，其中提到，当初始化table以及记录数量达到阈值之时会触发HashMap的扩容，而扩容是通过方法resize来进行的，下面来分析一下resize方法是如何工作的。
+    
 <code>
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
@@ -286,6 +294,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 </p>
 <p>
 上面的分析是我们的猜测，下面来看一下HashMap是如何做的，获取元素是通过调用HashMap的get方法来进行的，下面展示了get方法的代码：
+    
 <code>
     public V get(Object key) {
         Node<K,V> e;
@@ -315,6 +324,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 </p>
 <p>
 首先会获得当前table的一个快照，然后根据需要查找的记录的key的hashCode来定位到table中的index，如果该位置为null，说明没有没有记录落到该位置上，也就不存在我们查找的记录，直接返回null。如果该位置不为null，说明至少有一个记录落到该位置上来，那么就判断该位置的第一个记录是否使我们查找的记录，如果是则直接返回，否则，根据该index上是一条链表还是一棵红黑树来分别查找我们需要的记录，找到则返回记录，否则返回null。下面来看一下如何判断HashMap中是否有一个记录的方法：
+    
 <code>
     public boolean containsKey(Object key) {
         return getNode(hash(key), key) != null;
@@ -327,6 +337,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 <h2>HashMap删除记录详解</h2>
 <p>
 现在来看一下HashMap是如何实现删除一个记录的。下面首先展示了相关的代码：
+    
 <code>
     public V remove(Object key) {
         Node<K,V> e;
